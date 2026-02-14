@@ -162,6 +162,7 @@ RUN bin_path=/home/node/.local/bin curl -sfL https://direnv.net/install.sh | bas
 
 # Copy Claude Code plugin install script (to be run by user after container starts)
 COPY --chown=node:node scripts/cc-plugin-install.sh /home/node/.local/bin/cc-plugin-install
+RUN chmod +x /home/node/.local/bin/cc-plugin-install
 # RUN chmod +x /usr/local/bin/cc-plugin-install # MARKED FOR DELETION - CC needs to be authenticated to run this script
 
 USER node
