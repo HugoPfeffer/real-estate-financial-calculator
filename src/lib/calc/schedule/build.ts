@@ -35,6 +35,7 @@ export function buildSchedule(system: 'sac' | 'price', inputs: ValidatedInputs):
 	return {
 		system,
 		periods,
-		totals: computeTotals(periods)
+		totals: computeTotals(periods),
+		monthlyRate: i
 	};
 }

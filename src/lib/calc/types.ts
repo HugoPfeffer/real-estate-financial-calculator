@@ -47,6 +47,7 @@ export interface Schedule {
 	system: 'sac' | 'price';
 	periods: Period[];
 	totals: Totals;
+	monthlyRate: number;
 }
 
 export interface ComparisonResult {

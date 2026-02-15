@@ -27,9 +27,7 @@ export function simulateExtraAmortization(
 ): ExtraAmortResult {
 	const system = baseSchedule.system;
 	const basePeriods = baseSchedule.periods;
-	const i = basePeriods.length > 0
-		? basePeriods[0].interest / basePeriods[0].balance
-		: 0;
+	const i = baseSchedule.monthlyRate;
 
 	// Build a map of extras by month (expanding recurring)
 	const extrasMap = new Map<number, number>();
@@ -54,15 +52,22 @@ export function simulateExtraAmortization(
 	let cumulativeInterest = 0;
 	let cumulativeAmortization = 0;
 	let nRemaining = basePeriods.length;
+	let totalExtrasApplied = 0;
 	let t = 0;
 
-	while (balance > 0.01 && t < basePeriods.length * 2) {
+	const maxPeriods = modality === 'parcela' ? basePeriods.length : basePeriods.length * 2;
+
+	while (balance > 0.01 && t < maxPeriods) {
 		t++;
+		const isLast = modality === 'parcela' && t === basePeriods.length;
 		const interest = round2(balance * i);
 		let amortization: number;
 		let payment: number;
 
-		if (system === 'sac') {
+		if (isLast) {
+			amortization = round2(balance);
+			payment = round2(amortization + interest);
+		} else if (system === 'sac') {
 			amortization = Math.min(round2(A), round2(balance));
 			payment = round2(amortization + interest);
 		} else {
@@ -91,6 +96,7 @@ export function simulateExtraAmortization(
 			const actualExtra = Math.min(extra, balance);
 			balance = round2(balance - actualExtra);
 			cumulativeAmortization = round2(cumulativeAmortization + actualExtra);
+			totalExtrasApplied += actualExtra;
 
 			// Update last period's balance
 			periods[periods.length - 1].balance = Math.max(balance, 0);
@@ -115,6 +121,20 @@ export function simulateExtraAmortization(
 		}
 	}
 
+	// Merge tiny trailing period (rounding drift artifact) into previous
+	if (periods.length > 1) {
+		const last = periods[periods.length - 1];
+		const prev = periods[periods.length - 2];
+		if (last.balance === 0 && last.payment < prev.payment * 0.1) {
+			prev.amortization = round2(prev.amortization + last.amortization);
+			prev.payment = round2(prev.payment + last.amortization);
+			prev.balance = 0;
+			prev.cumulativeAmortization = last.cumulativeAmortization;
+			prev.cumulativeInterest = last.cumulativeInterest;
+			periods.pop();
+		}
+	}
+
 	// Compute totals
 	let totalPayment = 0;
 	let totalInterest = 0;
@@ -124,10 +144,7 @@ export function simulateExtraAmortization(
 		totalInterest += p.interest;
 		totalAmortization += p.amortization;
 	}
-	// Add extra payments to totalPayment
-	for (const [, amt] of extrasMap) {
-		totalPayment += amt;
-	}
+	totalPayment += totalExtrasApplied;
 
 	const modified: Schedule = {
 		system,
@@ -138,7 +155,8 @@ export function simulateExtraAmortization(
 			totalAmortization: round2(totalAmortization),
 			firstPayment: periods[0]?.payment || 0,
 			lastPayment: periods[periods.length - 1]?.payment || 0
-		}
+		},
+		monthlyRate: i
 	};
 
 	const savings: SavingsSummary = {

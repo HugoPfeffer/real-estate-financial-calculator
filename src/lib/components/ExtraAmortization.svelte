@@ -198,6 +198,8 @@
 				{@const chartW = 600}
 				{@const chartH = 180}
 				{@const pad = 40}
+				{@const origNumPts = Math.ceil(origPeriods.length / step)}
+				{@const modNumPts = Math.ceil(modPeriods.length / step)}
 
 				<div>
 					<h4 class="text-sm font-medium mb-2">Saldo Devedor: Original vs Modificado</h4>
@@ -207,8 +209,8 @@
 						<!-- Original (gray dashed) -->
 						<path
 							d={toSvgPath(
-								Array.from({ length: Math.ceil(origPeriods.length / step) }, (_, idx) => {
-									const i = Math.min(idx * step, origPeriods.length - 1);
+								Array.from({ length: origNumPts }, (_, idx) => {
+									const i = idx === origNumPts - 1 ? origPeriods.length - 1 : idx * step;
 									return {
 										x: pad + (i / (maxLen - 1)) * chartW,
 										y: chartH + pad - (origPeriods[i].balance / maxBal) * chartH
@@ -221,8 +223,8 @@
 						<!-- Modified (emerald) -->
 						<path
 							d={toSvgPath(
-								Array.from({ length: Math.ceil(modPeriods.length / step) }, (_, idx) => {
-									const i = Math.min(idx * step, modPeriods.length - 1);
+								Array.from({ length: modNumPts }, (_, idx) => {
+									const i = idx === modNumPts - 1 ? modPeriods.length - 1 : idx * step;
 									return {
 										x: pad + (i / (maxLen - 1)) * chartW,
 										y: chartH + pad - (modPeriods[i].balance / maxBal) * chartH
