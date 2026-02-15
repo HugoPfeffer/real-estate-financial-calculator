@@ -1,0 +1,104 @@
+name: calculation
+version: 1
+description: Calculation-first workflow from EventStorming discovery to data schema and implementation planning
+artifacts:
+  - id: event-storming
+    generates: event-storming.md
+    description: EventStorming discovery of calculation triggers, user actions, domains, and business rules
+    template: event-storming.md
+    instruction: |
+      Capture EventStorming outcomes adapted for a calculation domain.
+
+      Focus areas:
+      - Calculation triggers (what causes a computation to run)
+      - User actions (inputs, selections, configuration)
+      - Calculation domains (engines, modules, validators)
+      - Business rules and regulatory constraints
+      - Data flow: User Input -> Validation -> Calculation -> Output
+      - Hotspots, ambiguities, and open questions
+
+      Keep this artifact collaborative and discovery-oriented. It is an input for
+      calculation modeling, specs, design, and data schema authoring.
+    requires: []
+
+  - id: calculation-modeling
+    generates: calculation-modeling.md
+    description: Calculation flow modeling from user inputs through validation and formulas to outputs
+    template: calculation-modeling.md
+    instruction: |
+      Transform event-storming outputs into structured calculation flows.
+
+      Use swim lanes in this sequence:
+      User Input -> Validation -> Calculation -> Output
+
+      Add Mermaid diagrams to visualize data flow through the calculation pipeline.
+      This artifact should make input-output dependencies and formula chains explicit
+      so later specs, design, and data-schema work stays aligned with discovered behavior.
+    requires:
+      - event-storming
+
+  - id: specs
+    generates: specs/**/*.md
+    description: User-story specifications with testable acceptance criteria
+    template: specs/spec.md
+    instruction: |
+      Author user-story specifications derived from discovery and modeling artifacts.
+
+      Requirements:
+      - Use user-story format: As a <role>, I want <capability>, so that <benefit>.
+      - Use Given/When/Then acceptance criteria for each story.
+      - Keep each story traceable to event-storming and calculation-modeling outputs.
+    requires:
+      - calculation-modeling
+
+  - id: design
+    generates: design.md
+    description: Technical design decisions for the calculation architecture
+    template: design.md
+    instruction: |
+      Document implementation-level architecture decisions for the calculation engine.
+
+      Include calculation engine structure, state management, precision/rounding
+      strategy, data formatting conventions (BRL, Brazilian number formatting),
+      rate conversion rules, and deployment concerns. Reference decisions back to
+      specs and calculation-modeling flows.
+    requires:
+      - specs
+
+  - id: data-schema
+    generates: data-schema.md
+    description: Data types, validation rules, and formula definitions for the calculation engine
+    template: data-schema.md
+    instruction: |
+      Author the data schema from event-storming, calculation-modeling, specs, and design.
+
+      Completion guidance:
+      - `data-schema.md` is not complete until formulas are verified.
+      - Verify each formula against at least two reference calculations with known results.
+      - If verification fails, resolve errors before marking this artifact done.
+    requires:
+      - design
+
+  - id: tasks
+    generates: tasks.md
+    description: Implementation checklist created after verified data schema
+    template: tasks.md
+    instruction: |
+      Plan implementation only after upstream artifacts are complete.
+
+      Preconditions:
+      - Specs are reviewed.
+      - Design is reviewed.
+      - Data schema formulas have been verified against reference calculations.
+
+      Break work into small, dependency-ordered checkbox tasks.
+    requires:
+      - data-schema
+
+apply:
+  requires:
+    - tasks
+  tracks: tasks.md
+  instruction: |
+    Read context files, work through pending tasks, mark complete as you go.
+    Pause if you hit blockers or need clarification.
