@@ -1,0 +1,93 @@
+schema: event-driven
+
+context: |
+  ## Project Overview
+  A personal-use GitHub Pages web application for simulating and comparing
+  real estate financing options in the Brazilian market. Built with Svelte
+  (static build deployed to GitHub Pages). UI entirely in Portuguese (pt-BR).
+
+  ## Core Philosophy
+  - Accuracy of financial calculations is the top priority.
+  - Keep it simple — single user, no auth, no backend, no over-engineering.
+  - All computation runs client-side in the browser.
+
+  ## Financing Modalities
+  Supports the three main Brazilian amortization systems:
+  - SAC (Sistema de Amortização Constante) — fixed principal, decreasing installments.
+  - Price (Tabela Price) — fixed installments, increasing principal share over time.
+  - SACRE — hybrid system with periodic installment recalculation.
+
+  ## Key Features
+  1. **Input fields**: property value, down payment, financing term (months),
+     annual/monthly interest rate, gross income, net income, FGTS balance,
+     co-borrower income. Used for both calculation and affordability checks.
+  2. **Full amortization schedule**: month-by-month table showing installment,
+     principal, interest, remaining balance for each period.
+  3. **Side-by-side comparison**: default view compares SAC vs Price vs SACRE
+     for the same inputs, with ability to drill into a single modality.
+  4. **Extraordinary amortization simulation**: user can simulate the impact of:
+     - A lump-sum extra payment at a specific month.
+     - Multiple extra payments at different points in time.
+     - A recurring extra monthly payment on top of the regular installment.
+     The output shows total interest saved and term reduction.
+  5. **Hardcoded bank rate defaults**: pre-filled interest rates from major
+     Brazilian banks (Caixa, Banco do Brasil, Itaú, Bradesco, Santander)
+     as starting points. User can override manually.
+
+  ## Tech Stack
+  - Svelte (compiled to static assets, no runtime framework overhead).
+  - Deployed as a static site to GitHub Pages.
+  - No backend, no database — all state is ephemeral or browser-local.
+
+  ## Reference Data (Feb 2026)
+  Default bank rates (annual + TR):
+  - Caixa: 10.26–11.19%  |  Itaú: 11.60%  |  Santander: 11.69–11.79%
+  - Bradesco: 12.19%  |  Banco do Brasil: 12.00%  |  Pro-Cotista: 9.00–9.01%
+
+  Financing constraints:
+  - Max income commitment: 30% of gross monthly income.
+  - Standard down payment: 30% (banks accept 20–40%).
+  - SFH ceiling: R$ 2,250,000.  FGTS max property: R$ 1,500,000.
+  - FGTS extraordinary amortization interval: 24 months.
+  - No early-payment penalty (protected by Brazilian law).
+
+  Insurance (mandatory in SFH):
+  - MIP (Morte e Invalidez Permanente): ~0.021% of remaining balance/month.
+  - DFI (Danos Físicos ao Imóvel): ~0.0034% of property value/month.
+  - Admin fee (taxa de administração): R$ 25–50/month.
+
+  Amortization formulas:
+  - SAC: A = P/n; Interest = Balance × i; Payment = A + Interest (decreasing).
+  - Price: PMT = P × [i(1+i)^n] / [(1+i)^n - 1] (constant payment).
+  - SACRE: SAC-based payment fixed for 12-month blocks, recalculated each year.
+
+  Extraordinary amortization options:
+  - Redução de prazo (reduce term) — maximizes interest savings.
+  - Redução de parcela (reduce installment) — lowers monthly burden.
+  - FGTS periodic use allowed every 24 months.
+
+  ## Deployment
+  - SvelteKit with @sveltejs/adapter-static → builds to static assets.
+  - GitHub Pages: set paths.base to repo name, add .nojekyll to static/.
+  - Export `const prerender = true` in root +layout.ts.
+
+  ## Non-Goals
+  - No user accounts or authentication.
+  - No server-side processing.
+  - No internationalization beyond pt-BR.
+  - No mobile-native app — responsive web is sufficient.
+
+rules:
+  specs:
+    - All monetary values must use BRL (R$) and Brazilian number formatting (dot for thousands, comma for decimals).
+    - Interest rates in specs must distinguish annual (a.a.) vs monthly (a.m.) and specify the indexer (TR, IPCA, or fixed).
+    - Amortization formulas must be specified mathematically, not just described in prose.
+    - Every financing modality (SAC, Price, SACRE) must be covered when specifying calculation features.
+    - Income commitment validation (max 30% of gross income) must be included in any affordability-related spec.
+    - Extraordinary amortization specs must cover both modalities — redução de prazo and redução de parcela.
+  tasks:
+    - Calculation logic must have unit tests verifying against known manual calculations (e.g., SAC schedule for R$ 300,000 at 10% a.a. over 360 months).
+    - Any change to amortization formulas requires cross-verification against at least two reference examples.
+    - UI tasks must specify pt-BR labels and currency formatting.
+    - Bank rate defaults must be sourced and documented with a date reference so they can be updated later.
+    - Build must produce a static site deployable to GitHub Pages — no SSR, no API routes.
