@@ -1,4 +1,4 @@
-schema: event-driven
+schema: calculation
 
 context: |
   ## Project Overview
