@@ -12,10 +12,9 @@ context: |
   - All computation runs client-side in the browser.
 
   ## Financing Modalities
-  Supports the three main Brazilian amortization systems:
+  Supports two Brazilian amortization systems:
   - SAC (Sistema de Amortização Constante) — fixed principal, decreasing installments.
   - Price (Tabela Price) — fixed installments, increasing principal share over time.
-  - SACRE — hybrid system with periodic installment recalculation.
 
   ## Key Features
   1. **Input fields**: property value, down payment, financing term (months),
@@ -23,7 +22,7 @@ context: |
      co-borrower income. Used for both calculation and affordability checks.
   2. **Full amortization schedule**: month-by-month table showing installment,
      principal, interest, remaining balance for each period.
-  3. **Side-by-side comparison**: default view compares SAC vs Price vs SACRE
+  3. **Side-by-side comparison**: default view compares SAC vs Price
      for the same inputs, with ability to drill into a single modality.
   4. **Extraordinary amortization simulation**: user can simulate the impact of:
      - A lump-sum extra payment at a specific month.
@@ -31,8 +30,9 @@ context: |
      - A recurring extra monthly payment on top of the regular installment.
      The output shows total interest saved and term reduction.
   5. **Hardcoded bank rate defaults**: pre-filled interest rates from major
-     Brazilian banks (Caixa, Banco do Brasil, Itaú, Bradesco, Santander)
-     as starting points. User can override manually.
+     Brazilian banks (Caixa, Banco do Brasil, Itaú, Santander) shipped as
+     editable defaults. User can modify presets, add new banks, or enter
+     rates manually. Presets persist in localStorage.
 
   ## Tech Stack
   - Svelte (compiled to static assets, no runtime framework overhead).
@@ -40,9 +40,9 @@ context: |
   - No backend, no database — all state is ephemeral or browser-local.
 
   ## Reference Data (Feb 2026)
-  Default bank rates (annual + TR):
-  - Caixa: 10.26–11.19%  |  Itaú: 11.60%  |  Santander: 11.69–11.79%
-  - Bradesco: 12.19%  |  Banco do Brasil: 12.00%  |  Pro-Cotista: 9.00–9.01%
+  Default bank rates (annual + TR) — shipped as editable presets, user can modify or add:
+  - Caixa: 10.49%  |  Itaú: 11.60%  |  Santander: 11.79%
+  - Banco do Brasil: 12.00%  |  Pro-Cotista: 9.01%
 
   Financing constraints:
   - Max income commitment: 30% of gross monthly income.
@@ -59,7 +59,6 @@ context: |
   Amortization formulas:
   - SAC: A = P/n; Interest = Balance × i; Payment = A + Interest (decreasing).
   - Price: PMT = P × [i(1+i)^n] / [(1+i)^n - 1] (constant payment).
-  - SACRE: SAC-based payment fixed for 12-month blocks, recalculated each year.
 
   Extraordinary amortization options:
   - Redução de prazo (reduce term) — maximizes interest savings.
@@ -82,7 +81,7 @@ rules:
     - All monetary values must use BRL (R$) and Brazilian number formatting (dot for thousands, comma for decimals).
     - Interest rates in specs must distinguish annual (a.a.) vs monthly (a.m.) and specify the indexer (TR, IPCA, or fixed).
     - Amortization formulas must be specified mathematically, not just described in prose.
-    - Every financing modality (SAC, Price, SACRE) must be covered when specifying calculation features.
+    - Every financing modality (SAC, Price) must be covered when specifying calculation features.
     - Income commitment validation (max 30% of gross income) must be included in any affordability-related spec.
     - Extraordinary amortization specs must cover both modalities — redução de prazo and redução de parcela.
   tasks:

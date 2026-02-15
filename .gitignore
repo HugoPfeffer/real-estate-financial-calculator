@@ -2,3 +2,4 @@
 .envrc
 .mcp.json
 .vscode/
+node_modules/
