@@ -45,7 +45,7 @@
 - [x] 6.2 Write unit tests for Price:
   - Test 1: PV=10,000, n=12, i=0.01 → PMT=888.49, total interest=661.88
   - Test 2: PV=30,000, n=12, i=0.015 → PMT=2,750.40
-  - Test 3: Verify amortization grows geometrically: A_(t+1)/A_t ≈ (1+i)
+  - Test 3: Verify amortization grows geometrically: A\_(t+1)/A_t ≈ (1+i)
   - Test 4: Verify SD_n = 0.00 exactly
 
 ## 7. Calculation Engine — Schedule Builder and Comparison
@@ -116,7 +116,7 @@
 ## 16. Build Verification
 
 - [x] 16.1 Verify `npm run build` produces static output in `build/`, no SSR, no API routes.
-- [ ] 16.2 Test built output locally with `npx serve build/` — confirm simulation runs end-to-end.
+- [x] 16.2 Test built output locally with `npx serve build/` — confirm simulation runs end-to-end.
 
 ## 17. GitHub Actions CI/CD
 
@@ -131,6 +131,6 @@
   - Environment: `github-pages`
   - Uses GitHub Pages deployment via Actions (not legacy gh-pages branch)
 - [x] 17.3 Add `.nojekyll` to `static/` directory (already in scaffold task 2.9, verify present in build output).
-- [ ] 17.4 Ensure repo Settings → Pages → Source is set to "GitHub Actions".
-- [ ] 17.5 Push to `main` and verify: CI workflow passes (check, test, build), deploy workflow runs and site is live at `https://<user>.github.io/<repo>/`.
-- [ ] 17.6 Verify deployed site loads correctly with `paths.base` prefix — all assets, routes, and navigation work.
+- [x] 17.4 Ensure repo Settings → Pages → Source is set to "GitHub Actions".
+- [x] 17.5 Push to `main` and verify: CI workflow passes (check, test, build), deploy workflow runs and site is live at `https://<user>.github.io/<repo>/`.
+- [x] 17.6 Verify deployed site loads correctly with `paths.base` prefix — all assets, routes, and navigation work.
