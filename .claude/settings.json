@@ -1,7 +1,20 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
-    "allow": ["Bash(npm run lint)", "Bash(npm run test *)", "Read(~/.bashrc)"],
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run test *)",
+      "Read(~/.bashrc)",
+      "Read(./*)"
+    ],
     "deny": [
       "Bash(curl *)",
       "Read(./.env)",
@@ -9,18 +22,10 @@
       "Read(./secrets/**)"
     ]
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
-  "plansDirectory": ".claude/plans",
-  "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
-    "OTEL_METRICS_EXPORTER": "otlp"
-  },
   "companyAnnouncements": [
-    "Welcome to Acme Corp! Review our code guidelines at docs.acme.com",
-    "Reminder: Code reviews required for all PRs",
-    "New security policy in effect"
-  ]
+    "GitHub Pages personal application for Brazilian real estate financing simulator",
+    "Framework: OpenSpec",
+    "Author: Hugo Pfeffer"
+  ],
+  "plansDirectory": ".claude/plans"
 }
