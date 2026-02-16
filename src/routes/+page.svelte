@@ -3,7 +3,6 @@
 	import SummaryCards from '$lib/components/SummaryCards.svelte';
 	import ComparisonCharts from '$lib/components/ComparisonCharts.svelte';
 	import ScheduleTable from '$lib/components/ScheduleTable.svelte';
-	import ExtraAmortization from '$lib/components/ExtraAmortization.svelte';
 	import { getSimulationState } from '$lib/stores/simulation.svelte';
 
 	const sim = getSimulationState();
@@ -49,12 +48,6 @@
 			<ScheduleTable />
 		</section>
 
-		<!-- Extraordinary Amortization -->
-		<section class="mb-8">
-			<h2 class="text-lg font-semibold mb-4">Amortização Extraordinária</h2>
-			<p class="text-sm text-zinc-500 mb-4">Antecipação de pagamento é livre de multas no Brasil (Lei 8.692/93).</p>
-			<ExtraAmortization />
-		</section>
 	{/if}
 
 	<!-- Footer -->

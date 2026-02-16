@@ -79,6 +79,11 @@ export interface SavingsSummary {
 	totalSaved: number;
 }
 
+export interface PlanningResult {
+	modified: Schedule;
+	savings: SavingsSummary;
+}
+
 export interface ValidationError {
 	field: string;
 	message: string;
